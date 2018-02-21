@@ -1,0 +1,9 @@
+[submodule "libs/stateful"]
+	path = libs/stateful
+	url = https://github.com/kikito/stateful.lua.git
+[submodule "libs/cron"]
+	path = libs/cron
+	url = https://github.com/kikito/cron.lua.git
+[submodule "libs/middleclass"]
+	path = libs/middleclass
+	url = https://github.com/kikito/middleclass.git
