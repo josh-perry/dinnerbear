@@ -29,7 +29,7 @@ function MainMenu:drawBear(x, y)
 end
 
 function MainMenu:draw()
-	self:drawBear(lg:getWidth() - 350, 50)
+	self:drawBear(lg:getWidth() - 300, lg:getHeight() - 480 - 50)
 end
 
 function MainMenu:update(dt)
