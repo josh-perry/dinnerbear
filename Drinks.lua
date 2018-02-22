@@ -1,5 +1,7 @@
 -- Libraries
 local class = require("libs/middleclass/middleclass")
+local lume = require("libs/lume/lume")
+local cron = require("libs/cron/cron")
 
 -- Shorthand
 local lg = love.graphics
@@ -22,14 +24,28 @@ function Drinks:initialize()
 	}
 
 	self.drunk = 0
+
+	self.randomMoveTimer = cron.after(5, function()
+			self:initRandomMovementTimer()
+			self.allowRotation = true
+		end)
+
+	self.randomMoveDirection = nil
+	self.allowRotation = false
+end
+
+function Drinks:initRandomMovementTimer()
+	self.randomMoveTimer = cron.after(math.random(0.1, 0.6),
+		function()
+			self.randomMoveDirection = lume.randomchoice({"up", "down", "left", "right"})
+
+			self:initRandomMovementTimer()
+		end)
 end
 
 function Drinks:draw()
 	lg.print("Suspicion: "..self.suspicion.."%", 10, 10)
 	lg.print("Drunk water: "..self.drunk, 10, 20)
-
-	-- lg.setColor(255, 255, 100)
-	-- lg.circle("fill", self.drinkCollider.x, self.drinkCollider.y, self.drinkCollider.r)
 
 	self:drawBearMouth()
 	self:drawWater()
@@ -39,6 +55,11 @@ end
 
 function Drinks:update(dt)
 	self.physicsWorld:update(dt)
+	self.randomMoveTimer:update(dt)
+
+	if self.randomMoveDirection then
+		self:moveGlassDirection(self.randomMoveDirection, dt)
+	end
 
 	local deathZone = lg:getHeight()
 	for i, water in ipairs(self.waterDroplets) do
@@ -59,10 +80,74 @@ function Drinks:update(dt)
 
 	if self.suspicion >= 100 then
 		self:changeState("GameOver")
+		return
 	end
+
+	self:moveGlass(dt)
 end
 
 function Drinks:keypressed(key, scancode, isRepeat)
+end
+
+function Drinks:moveGlass(dt)
+	if not self.allowRotation then return end
+
+	local rotateSpeed = 1
+	local shakyness = 0.3
+	local left = self.glass.left
+	local right = self.glass.right
+	local bottom = self.glass.bottom
+
+	if love.keyboard.isDown("q") then
+		left.body:setAngle(left.body:getAngle() - (rotateSpeed * dt))
+		right.body:setAngle(right.body:getAngle() - (rotateSpeed * dt))
+		bottom.body:setAngle(bottom.body:getAngle() - (rotateSpeed * dt))
+
+		shakyness = shakyness * 12
+	elseif love.keyboard.isDown("e") then
+		left.body:setAngle(left.body:getAngle() + (rotateSpeed * dt))
+		right.body:setAngle(right.body:getAngle() + (rotateSpeed * dt))
+		bottom.body:setAngle(bottom.body:getAngle() + (rotateSpeed * dt))
+
+		shakyness = shakyness * 12
+	end
+
+	-- Random shakes
+	local shake = love.math.random(-shakyness, shakyness)
+	left.body:setAngle(left.body:getAngle() + shake * dt)
+	right.body:setAngle(right.body:getAngle() + shake * dt)
+	bottom.body:setAngle(bottom.body:getAngle() + shake * dt)
+end
+
+function Drinks:moveGlassDirection(direction, dt)
+	local speed = love.math.random(30, 70)
+	local left = self.glass.left
+	local right = self.glass.right
+	local bottom = self.glass.bottom
+
+	if direction == "left" then
+		left.body:setX(left.body:getX() - (speed * dt))
+		right.body:setX(right.body:getX() - (speed * dt))
+		bottom.body:setX(bottom.body:getX() - (speed * dt))
+	end
+
+	if direction == "right" then
+		left.body:setX(left.body:getX() + (speed * dt))
+		right.body:setX(right.body:getX() + (speed * dt))
+		bottom.body:setX(bottom.body:getX() + (speed * dt))
+	end
+
+	if direction == "up" then
+		left.body:setY(left.body:getY() - (speed * dt))
+		right.body:setY(right.body:getY() - (speed * dt))
+		bottom.body:setY(bottom.body:getY() - (speed * dt))
+	end
+
+	if direction == "down" then
+		left.body:setY(left.body:getY() + (speed * dt))
+		right.body:setY(right.body:getY() + (speed * dt))
+		bottom.body:setY(bottom.body:getY() + (speed * dt))
+	end
 end
 
 function Drinks:drawWater()
@@ -95,7 +180,7 @@ function Drinks:createGlass(world)
 	local rim = 10
 	local height = 180
 	local y = lg:getHeight()/2 - 150
-	local x = lg:getWidth()/2
+	local x = lg:getWidth()/2 - 100
 
 	local glass = {}
 
@@ -119,10 +204,12 @@ end
 
 function Drinks:createWater(world)
 	local waterDroplets = {}
+	local x = (lg:getWidth() / 2) - 100
+	local y = lg:getHeight() / 2
 
-	for i = 1, 2000 do
+	for i = 1, 200 do
 		local water = {}
-		water.body = love.physics.newBody(self.physicsWorld, (lg:getWidth() / 2) + love.math.random(-10, 10), lg:getHeight() / 2 - (i * 12), "dynamic")
+		water.body = love.physics.newBody(self.physicsWorld, x + love.math.random(-10, 10), y - (i * 12), "dynamic")
 		water.shape = love.physics.newCircleShape(4)
 		water.fixture = love.physics.newFixture(water.body, water.shape, 1)
 
