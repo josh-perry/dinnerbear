@@ -11,6 +11,8 @@ function MainMenu:initialize()
 	local image = lg.newImage("graphics/menu_bear.png")
 	local w, h = image:getWidth(), image:getHeight()
 
+	self.suspicion = 0
+
 	self.bear = {}
 	self.bear.image = image
 	self.bear.quads = {

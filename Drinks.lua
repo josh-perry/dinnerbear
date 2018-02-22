@@ -18,7 +18,7 @@ function Drinks:initialize()
 end
 
 function Drinks:draw()
-	lg.print("Suspicion: "..self.suspicion, 10, 10)
+	lg.print("Suspicion: "..self.suspicion.."%", 10, 10)
 
 	self:drawWater()
 	self:drawGlass()
@@ -34,6 +34,10 @@ function Drinks:update(dt)
 			self.suspicion = self.suspicion + 1
 			table.remove(self.waterDroplets, i)
 		end
+	end
+
+	if self.suspicion >= 100 then
+		self:changeState("GameOver")
 	end
 end
 
@@ -90,7 +94,7 @@ end
 function Drinks:createWater(world)
 	local waterDroplets = {}
 
-	for i = 1, 200 do
+	for i = 1, 2000 do
 		local water = {}
 		water.body = love.physics.newBody(self.physicsWorld, (lg:getWidth() / 2) + love.math.random(-10, 10), lg:getHeight() / 2 - (i * 12), "dynamic")
 		water.shape = love.physics.newCircleShape(4)

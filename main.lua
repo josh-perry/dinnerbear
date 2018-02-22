@@ -3,6 +3,7 @@ local stateful = require("libs/stateful/stateful")
 local Game = require("Game")
 require("MainMenu")
 require("Drinks")
+require("GameOver")
 
 local function initDebug()
 	-- ST3 output
