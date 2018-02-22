@@ -3,6 +3,7 @@ local stateful = require("libs/stateful/stateful")
 local Game = require("Game")
 require("MainMenu")
 require("Drinks")
+require("Salt")
 require("GameOver")
 
 local function initDebug()
@@ -38,4 +39,6 @@ function love.keypressed(key, scancode, isRepeat)
 	end
 
 	Game:keypressed(key, scancode, isRepeat)
+
+	print(love.mouse.getPosition())
 end

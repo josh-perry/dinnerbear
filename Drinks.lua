@@ -18,8 +18,8 @@ function Drinks:initialize()
 	self.glass = self:createGlass(self.physicsWorld)
 	self.bear = self:createBear()
 	self.drinkCollider = {
-		x = 600,
-		y = 500,
+		x = 485,
+		y = 415,
 		r = 82
 	}
 
@@ -81,16 +81,16 @@ function Drinks:update(dt)
 		end
 	end
 
+	self:moveGlass(dt)
+
 	if self.suspicion >= 100 then
 		self:changeState("GameOver")
 		return
-	end
-
-	if table.getn(self.waterDroplets) <= 0 and self.suspicion < 100 then
+	elseif table.getn(self.waterDroplets) <= 0 then
 		-- Go to the next level
+		self:changeState("Salt")
+		return
 	end
-
-	self:moveGlass(dt)
 end
 
 function Drinks:keypressed(key, scancode, isRepeat)
