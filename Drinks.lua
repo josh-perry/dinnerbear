@@ -14,6 +14,7 @@ function Drinks:initialize()
 
 	self.waterDroplets = self:createWater(self.physicsWorld)
 	self.glass = self:createGlass(self.physicsWorld)
+	self.bear = self:createBear()
 end
 
 function Drinks:draw()
@@ -25,6 +26,7 @@ function Drinks:draw()
 	end
 
 	self:drawGlass()
+	self:drawBear()
 end
 
 function Drinks:update(dt)
@@ -40,6 +42,10 @@ function Drinks:drawGlass()
 	lg.polygon("fill", self.glass.left.body:getWorldPoints(self.glass.left.shape:getPoints()))
 	lg.polygon("fill", self.glass.right.body:getWorldPoints(self.glass.right.shape:getPoints()))
 	lg.polygon("fill", self.glass.bottom.body:getWorldPoints(self.glass.bottom.shape:getPoints()))
+end
+
+function Drinks:drawBear()
+	lg.draw(self.bear.image, self.bear.quads.face, self.bear.position.x, self.bear.position.y, self.bear.rotation, 1, 1, self.bear.face.w/2, self.bear.face.h/2)
 end
 
 function Drinks:createGlass(world)
@@ -83,5 +89,31 @@ function Drinks:createWater(world)
 	return waterDroplets
 end
 
+function Drinks:createBear()
+	local bearImage = lg.newImage("graphics/drinking_bear.png")
+	local bearW = bearImage:getWidth()
+	local bearH = bearImage:getHeight()
+
+	local bear = {}
+	bear.image = bearImage
+	bear.face = {
+		x = 480,
+		y = 0,
+		w = 512,
+		h = 512
+	}
+	bear.quads = {
+		face = lg.newQuad(bear.face.x, bear.face.y, bear.face.w, bear.face.h, bearW, bearH)
+	}
+	bear.rotation = 1.23
+	bear.position = {}
+
+	local xOffset = 30
+	local yOffset = 30
+	bear.position.x = lg:getWidth() - bear.face.w / 2 + xOffset
+	bear.position.y = lg:getHeight() - bear.face.h / 2 + yOffset
+
+	return bear
+end
 
 return Drinks
