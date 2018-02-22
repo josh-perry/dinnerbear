@@ -20,20 +20,31 @@ end
 function Drinks:draw()
 	lg.print("Suspicion: "..self.suspicion, 10, 10)
 
-	lg.setColor(100, 255, 255)
-	for _, water in ipairs(self.waterDroplets) do
-		lg.circle("fill", water.body:getX(), water.body:getY(), water.shape:getRadius())
-	end
-
+	self:drawWater()
 	self:drawGlass()
 	self:drawBear()
 end
 
 function Drinks:update(dt)
 	self.physicsWorld:update(dt)
+
+	local deathZone = lg:getHeight()
+	for i, water in ipairs(self.waterDroplets) do
+		if water.body:getY() > deathZone then
+			self.suspicion = self.suspicion + 1
+			table.remove(self.waterDroplets, i)
+		end
+	end
 end
 
 function Drinks:keypressed(key, scancode, isRepeat)
+end
+
+function Drinks:drawWater()
+	lg.setColor(100, 255, 255)
+	for _, water in ipairs(self.waterDroplets) do
+		lg.circle("fill", water.body:getX(), water.body:getY(), water.shape:getRadius())
+	end
 end
 
 function Drinks:drawGlass()
