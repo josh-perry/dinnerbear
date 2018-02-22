@@ -8,16 +8,36 @@ local Game = require("Game")
 local MainMenu = Game:addState("MainMenu")
 
 function MainMenu:initialize()
+	local image = lg.newImage("graphics/menu_bear.png")
+	local w, h = image:getWidth(), image:getHeight()
+
+	self.bear = {}
+	self.bear.image = image
+	self.bear.quads = {
+		body = lg.newQuad(0, 0, 350, 480, w, h),
+		rightArm = lg.newQuad(400, 60, 135, 205, w, h),
+		leftArm = lg.newQuad(391, 348, 150, 125, w, h)
+	}
+end
+
+function MainMenu:drawBear(x, y)
+	local r = self.armRotation
+
+	lg.draw(self.bear.image, self.bear.quads.leftArm, x + 10, y + 90)
+	lg.draw(self.bear.image, self.bear.quads.body, x, y)
+	lg.draw(self.bear.image, self.bear.quads.rightArm, x + 135, y + 100)
 end
 
 function MainMenu:draw()
-	lg.print("Main menu draw")
+	self:drawBear(lg:getWidth() - 350, 50)
 end
 
 function MainMenu:update(dt)
 end
 
 function MainMenu:keypressed(key, scancode, isRepeat)
+	if key == "space" then
+	end
 end
 
 return MainMenu

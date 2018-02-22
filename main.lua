@@ -6,6 +6,7 @@ require("MainMenu")
 function love.load()
 	Game = Game:new()
 	Game:gotoState("MainMenu")
+	Game:initialize()
 end
 
 function love.draw()
