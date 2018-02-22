@@ -32,6 +32,7 @@ end
 
 function MainMenu:draw()
 	self:drawBear(lg:getWidth() - 300, lg:getHeight() - 480 - 50)
+	lg.printf("DINNERBEAR", 0, lg:getHeight() / 2, lg:getWidth(), "center")
 end
 
 function MainMenu:update(dt)
