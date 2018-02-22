@@ -2,11 +2,11 @@ local stateful = require("libs/stateful/stateful")
 
 local Game = require("Game")
 require("MainMenu")
+require("Drinks")
 
 function love.load()
 	Game = Game:new()
-	Game:gotoState("MainMenu")
-	Game:initialize()
+	Game:changeState("MainMenu")
 end
 
 function love.draw()

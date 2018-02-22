@@ -37,6 +37,7 @@ end
 
 function MainMenu:keypressed(key, scancode, isRepeat)
 	if key == "space" then
+		self:changeState("Drinks")
 	end
 end
 

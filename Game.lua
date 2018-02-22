@@ -21,4 +21,10 @@ end
 function Game:keypressed(key, scancode, isRepeat)
 end
 
+function Game:changeState(state)
+	print("Changing to state: "..state)
+	self:gotoState(state)
+	self:initialize()
+end
+
 return Game
