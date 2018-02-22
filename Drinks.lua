@@ -86,6 +86,10 @@ function Drinks:update(dt)
 		return
 	end
 
+	if table.getn(self.waterDroplets) <= 0 and self.suspicion < 100 then
+		-- Go to the next level
+	end
+
 	self:moveGlass(dt)
 end
 
@@ -192,7 +196,7 @@ end
 function Drinks:createGlass(world)
 	local top = 60
 	local bottom = 30
-	local rim = 10
+	local rim = 16
 	local height = 180
 	local y = lg:getHeight()/2 - 150
 	local x = lg:getWidth()/2 - 100
