@@ -15,11 +15,23 @@ function Drinks:initialize()
 	self.waterDroplets = self:createWater(self.physicsWorld)
 	self.glass = self:createGlass(self.physicsWorld)
 	self.bear = self:createBear()
+	self.drinkCollider = {
+		x = 600,
+		y = 500,
+		r = 82
+	}
+
+	self.drunk = 0
 end
 
 function Drinks:draw()
 	lg.print("Suspicion: "..self.suspicion.."%", 10, 10)
+	lg.print("Drunk water: "..self.drunk, 10, 20)
 
+	-- lg.setColor(255, 255, 100)
+	-- lg.circle("fill", self.drinkCollider.x, self.drinkCollider.y, self.drinkCollider.r)
+
+	self:drawBearMouth()
 	self:drawWater()
 	self:drawGlass()
 	self:drawBear()
@@ -32,6 +44,15 @@ function Drinks:update(dt)
 	for i, water in ipairs(self.waterDroplets) do
 		if water.body:getY() > deathZone then
 			self.suspicion = self.suspicion + 1
+			table.remove(self.waterDroplets, i)
+		end
+
+		local x = water.body:getX()
+		local y = water.body:getY()
+		local distance = math.sqrt((x - self.drinkCollider.x) ^ 2 + (y - self.drinkCollider.y) ^ 2)
+
+		if distance < self.drinkCollider.r then
+			self.drunk = self.drunk + 1
 			table.remove(self.waterDroplets, i)
 		end
 	end
@@ -57,6 +78,11 @@ function Drinks:drawGlass()
 	lg.polygon("fill", self.glass.left.body:getWorldPoints(self.glass.left.shape:getPoints()))
 	lg.polygon("fill", self.glass.right.body:getWorldPoints(self.glass.right.shape:getPoints()))
 	lg.polygon("fill", self.glass.bottom.body:getWorldPoints(self.glass.bottom.shape:getPoints()))
+end
+
+function Drinks:drawBearMouth()
+	lg.draw(self.bear.image, self.bear.quads.mouth, self.bear.position.x, self.bear.position.y, self.bear.rotation, 1, 1, self.bear.face.w/2, self.bear.face.h/2)
+
 end
 
 function Drinks:drawBear()
@@ -116,13 +142,20 @@ function Drinks:createBear()
 	bear.face = {
 		x = 480,
 		y = 0,
-		w = 512,
-		h = 512
+		w = 480,
+		h = 480
+	}
+	bear.mouth = {
+		x = 0,
+		y = 0,
+		w = 480,
+		h = 480
 	}
 	bear.quads = {
-		face = lg.newQuad(bear.face.x, bear.face.y, bear.face.w, bear.face.h, bearW, bearH)
+		face = lg.newQuad(bear.face.x, bear.face.y, bear.face.w, bear.face.h, bearW, bearH),
+		mouth = lg.newQuad(bear.mouth.x, bear.mouth.y, bear.mouth.w, bear.mouth.h, bearW, bearH)
 	}
-	bear.rotation = 1.6
+	bear.rotation = 1.5
 	bear.position = {}
 
 	local xOffset = 30
