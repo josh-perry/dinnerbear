@@ -32,6 +32,8 @@ function Drinks:initialize()
 
 	self.randomMoveDirection = nil
 	self.allowRotation = false
+
+	self.paw = lg.newImage("graphics/glass paw.png")
 end
 
 function Drinks:initRandomMovementTimer()
@@ -51,6 +53,7 @@ function Drinks:draw()
 	self:drawWater()
 	self:drawGlass()
 	self:drawBear()
+	self:drawPaw()
 end
 
 function Drinks:update(dt)
@@ -163,6 +166,18 @@ function Drinks:drawGlass()
 	lg.polygon("fill", self.glass.left.body:getWorldPoints(self.glass.left.shape:getPoints()))
 	lg.polygon("fill", self.glass.right.body:getWorldPoints(self.glass.right.shape:getPoints()))
 	lg.polygon("fill", self.glass.bottom.body:getWorldPoints(self.glass.bottom.shape:getPoints()))
+end
+
+function Drinks:drawPaw()
+	if not self.allowRotation then return end
+
+	local x, y = self.glass.bottom.body:getWorldPoints(self.glass.bottom.shape:getPoints())
+
+	x = x - 150
+	y = y - 100
+
+	lg.setColor(255, 255, 255, 200)
+	lg.draw(self.paw, x, y)
 end
 
 function Drinks:drawBearMouth()
