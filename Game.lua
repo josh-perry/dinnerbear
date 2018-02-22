@@ -9,6 +9,7 @@ local Game = class("Game")
 Game:include(stateful)
 
 function Game:initialize()
+	self.suspicion = 0
 end
 
 function Game:draw()

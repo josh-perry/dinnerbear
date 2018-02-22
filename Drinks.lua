@@ -18,7 +18,7 @@ function Drinks:initialize()
 end
 
 function Drinks:draw()
-	lg.print("Drinking", 10, 10)
+	lg.print("Suspicion: "..self.suspicion, 10, 10)
 
 	lg.setColor(100, 255, 255)
 	for _, water in ipairs(self.waterDroplets) do
@@ -53,21 +53,23 @@ function Drinks:createGlass(world)
 	local bottom = 30
 	local rim = 10
 	local height = 180
+	local y = lg:getHeight()/2 - 150
+	local x = lg:getWidth()/2
 
 	local glass = {}
 
 	glass.left = {}
-	glass.left.body = love.physics.newBody(world, lg:getWidth()/2, lg:getHeight()/2)
+	glass.left.body = love.physics.newBody(world, x, y)
 	glass.left.shape = love.physics.newPolygonShape(-top - rim, 0, -top, 0, -bottom, height, -bottom - rim, height)
 	glass.left.fixture = love.physics.newFixture(glass.left.body, glass.left.shape)
 
 	glass.right = {}
-	glass.right.body = love.physics.newBody(world, lg:getWidth()/2, lg:getHeight()/2)
+	glass.right.body = love.physics.newBody(world, x, y)
 	glass.right.shape = love.physics.newPolygonShape(top + rim, 0, top, 0, bottom, height, bottom + rim, height)
 	glass.right.fixture = love.physics.newFixture(glass.right.body, glass.right.shape)
 
 	glass.bottom = {}
-	glass.bottom.body = love.physics.newBody(world, lg:getWidth()/2, lg:getHeight()/2)
+	glass.bottom.body = love.physics.newBody(world, x, y)
 	glass.bottom.shape = love.physics.newPolygonShape(-bottom - rim, height, -bottom - rim, height - rim, bottom+rim, height-rim, bottom+rim, height)
 	glass.bottom.fixture = love.physics.newFixture(glass.bottom.body, glass.bottom.shape)
 
@@ -105,11 +107,11 @@ function Drinks:createBear()
 	bear.quads = {
 		face = lg.newQuad(bear.face.x, bear.face.y, bear.face.w, bear.face.h, bearW, bearH)
 	}
-	bear.rotation = 1.23
+	bear.rotation = 1.6
 	bear.position = {}
 
 	local xOffset = 30
-	local yOffset = 30
+	local yOffset = 100
 	bear.position.x = lg:getWidth() - bear.face.w / 2 + xOffset
 	bear.position.y = lg:getHeight() - bear.face.h / 2 + yOffset
 
