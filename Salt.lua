@@ -13,18 +13,23 @@ function Salt:initialize()
 	self.salt = self:createSalt(self.physicsWorld)
 	self.ground = self:createGround(self.physicsWorld)
 	self.saltAsker = self:createSaltAsker(self.physicsWorld)
-
+	self.bear = self:createBear()
 	self.paw = self:createPaw(self.physicsWorld)
+
 	self.grabbed = false
 
 	self.hoveringObject = false
 end
 
 function Salt:draw()
+	self:drawUi()
+
 	lg.polygon("fill", self.ground.body:getWorldPoints(self.ground.shape:getPoints()))
 
 	self:drawSaltAsker()
 	self:drawSalt()
+	self:drawBearMouth()
+	self:drawBear()
 	self:drawPaw()
 end
 
@@ -79,6 +84,14 @@ function Salt:drawPaw()
 	end
 
 	lg.draw(self.paw.image, self.paw.position.x, self.paw.position.y)
+end
+
+function Salt:drawBearMouth()
+	lg.draw(self.bear.image, self.bear.quads.mouth, self.bear.position.x, self.bear.position.y, self.bear.rotation, -1, 1, self.bear.face.w/2, self.bear.face.h/2)
+end
+
+function Salt:drawBear()
+	lg.draw(self.bear.image, self.bear.quads.face, self.bear.position.x, self.bear.position.y, self.bear.rotation, -1, 1, self.bear.face.w/2, self.bear.face.h/2)
 end
 
 function Salt:createSalt(world)
@@ -147,6 +160,40 @@ function Salt:createSaltAsker(world)
 	saltAsker.fixture = love.physics.newFixture(saltAsker.body, saltAsker.shape)
 
 	return saltAsker
+end
+
+function Salt:createBear()
+	local bearImage = lg.newImage("graphics/drinking_bear.png")
+	local bearW = bearImage:getWidth()
+	local bearH = bearImage:getHeight()
+
+	local bear = {}
+	bear.image = bearImage
+	bear.face = {
+		x = 480,
+		y = 0,
+		w = 480,
+		h = 480
+	}
+	bear.mouth = {
+		x = 0,
+		y = 0,
+		w = 480,
+		h = 480
+	}
+	bear.quads = {
+		face = lg.newQuad(bear.face.x, bear.face.y, bear.face.w, bear.face.h, bearW, bearH),
+		mouth = lg.newQuad(bear.mouth.x, bear.mouth.y, bear.mouth.w, bear.mouth.h, bearW, bearH)
+	}
+	bear.rotation = -0.8
+	bear.position = {}
+
+	local xOffset = 30
+	local yOffset = 100
+	bear.position.x = 0
+	bear.position.y = lg:getHeight() - bear.face.h / 2 + yOffset
+
+	return bear
 end
 
 return Salt

@@ -10,6 +10,8 @@ Game:include(stateful)
 
 function Game:initialize()
 	self.suspicion = 0
+
+	lg.setBackgroundColor(80, 110, 200)
 end
 
 function Game:draw()
@@ -26,6 +28,10 @@ function Game:changeState(state)
 	print("Changing to state: "..state)
 	self:gotoState(state)
 	self:initialize()
+end
+
+function Game:drawUi()
+	lg.print("Suspicion: "..self.suspicion.."%", 10, 10)
 end
 
 return Game

@@ -46,8 +46,7 @@ function Drinks:initRandomMovementTimer()
 end
 
 function Drinks:draw()
-	lg.print("Suspicion: "..self.suspicion.."%", 10, 10)
-	lg.print("Drunk water: "..self.drunk, 10, 20)
+	self:drawUi()
 
 	self:drawBearMouth()
 	self:drawWater()
@@ -186,7 +185,6 @@ end
 
 function Drinks:drawBearMouth()
 	lg.draw(self.bear.image, self.bear.quads.mouth, self.bear.position.x, self.bear.position.y, self.bear.rotation, 1, 1, self.bear.face.w/2, self.bear.face.h/2)
-
 end
 
 function Drinks:drawBear()
