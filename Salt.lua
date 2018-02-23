@@ -133,14 +133,18 @@ end
 function Salt:createSaltAsker(world)
 	local saltAsker = {}
 
+	local w = 210
+	local h = 40
+
 	saltAsker.image = lg.newImage("graphics/salt asker.png")
 	saltAsker.position = {
 		x = lg:getWidth() - saltAsker.image:getWidth() + (saltAsker.image:getWidth() / 4),
 		y = lg:getHeight() - saltAsker.image:getHeight()
 	}
 
-	print(lg:getWidth())
-	print(saltAsker.image:getWidth())
+	saltAsker.body = love.physics.newBody(world, saltAsker.position.x + 65 + (w/2), saltAsker.position.y + 126 + (h/2))
+	saltAsker.shape = love.physics.newRectangleShape(w, h)
+	saltAsker.fixture = love.physics.newFixture(saltAsker.body, saltAsker.shape)
 
 	return saltAsker
 end
