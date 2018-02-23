@@ -39,6 +39,4 @@ function love.keypressed(key, scancode, isRepeat)
 	end
 
 	Game:keypressed(key, scancode, isRepeat)
-
-	print(love.mouse.getPosition())
 end
