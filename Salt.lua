@@ -8,26 +8,55 @@ local Game = require("Game")
 local Salt = Game:addState("Salt")
 
 function Salt:initialize()
-	self.physicsWorld = love.physics.newWorld(0, 9.81*16, true)
+	self.physicsWorld = love.physics.newWorld(0, 9.81*32, true)
 
 	self.salt = self:createSalt(self.physicsWorld)
 	self.ground = self:createGround(self.physicsWorld)
+	self.saltAsker = self:createSaltAsker(self.physicsWorld)
 
-	self.paw = lg.newImage("graphics/glass paw.png")
+	self.paw = self:createPaw(self.physicsWorld)
+	self.grabbed = false
+
+	self.hoveringObject = false
 end
 
 function Salt:draw()
 	lg.polygon("fill", self.ground.body:getWorldPoints(self.ground.shape:getPoints()))
 
+	self:drawSaltAsker()
 	self:drawSalt()
 	self:drawPaw()
 end
 
 function Salt:update(dt)
 	self.physicsWorld:update(dt)
+	self:pawMovement(dt)
 end
 
 function Salt:keypressed(key, scancode, isRepeat)
+	if key == "space" then
+	end
+end
+
+function Salt:pawMovement(dt)
+	if love.keyboard.isDown("w") then
+		self.paw.position.y = self.paw.position.y - (self.paw.speed * dt)
+	end
+
+	if love.keyboard.isDown("s") then
+		self.paw.position.y = self.paw.position.y + (self.paw.speed * dt)
+	end
+
+	if love.keyboard.isDown("a") then
+		self.paw.position.x = self.paw.position.x - (self.paw.speed * dt)
+	end
+
+	if love.keyboard.isDown("d") then
+		self.paw.position.x = self.paw.position.x + (self.paw.speed * dt)
+	end
+
+	self.paw.body:setX(self.paw.position.x + 100)
+	self.paw.body:setY(self.paw.position.y + 25)
 end
 
 function Salt:drawSalt()
@@ -38,15 +67,18 @@ function Salt:drawSalt()
 	lg.draw(self.salt.image, x, y, self.salt.body:getAngle(), 1, 1, w / 2, h / 2)
 end
 
+function Salt:drawSaltAsker()
+	lg.draw(self.saltAsker.image, self.saltAsker.position.x, self.saltAsker.position.y)
+end
+
 function Salt:drawPaw()
-	local x, y = self.salt.body:getPosition()
-	local w = self.salt.image:getWidth()
-	local h = self.salt.image:getHeight()
+	if self.grabbed then
+		lg.setColor(255, 255, 255)
+	else
+		lg.setColor(255, 255, 255, 200)
+	end
 
-	x = x - 80
-	y = y + 40
-
-	lg.draw(self.paw, x, y, self.salt.body:getAngle(), 1, 1, w / 2, h / 2)
+	lg.draw(self.paw.image, self.paw.position.x, self.paw.position.y)
 end
 
 function Salt:createSalt(world)
@@ -59,12 +91,32 @@ function Salt:createSalt(world)
 	local w = salt.image:getWidth()
 	local h = salt.image:getHeight()
 
-	salt.body = love.physics.newBody(self.physicsWorld, x, y, "dynamic")
-	salt.body:setAngle(0)
+	salt.body = love.physics.newBody(world, x, y, "dynamic")
+	salt.body:setAngle(0.4)
 	salt.shape = love.physics.newPolygonShape(-(w/2), -(h/2), -(w/2), h/2, w/2, h/2, w/2, -h/2)
 	salt.fixture = love.physics.newFixture(salt.body, salt.shape)
 
 	return salt
+end
+
+function Salt:createPaw(world)
+	local x = lg:getWidth() / 2
+	local y = lg:getHeight() / 2
+
+	local paw = {}
+	paw.image = lg.newImage("graphics/glass paw.png")
+	paw.position = {
+		x = x,
+		y = y
+	}
+	paw.speed = 250
+
+	paw.body = love.physics.newBody(world, x, y)
+	paw.shape = love.physics.newCircleShape(16)
+	paw.fixture = love.physics.newFixture(paw.body, paw.shape)
+	paw.joint = nil
+
+	return paw
 end
 
 function Salt:createGround(world)
@@ -76,6 +128,21 @@ function Salt:createGround(world)
 	ground.fixture = love.physics.newFixture(ground.body, ground.shape)
 
 	return ground
+end
+
+function Salt:createSaltAsker(world)
+	local saltAsker = {}
+
+	saltAsker.image = lg.newImage("graphics/salt asker.png")
+	saltAsker.position = {
+		x = lg:getWidth() - saltAsker.image:getWidth() + (saltAsker.image:getWidth() / 4),
+		y = lg:getHeight() - saltAsker.image:getHeight()
+	}
+
+	print(lg:getWidth())
+	print(saltAsker.image:getWidth())
+
+	return saltAsker
 end
 
 return Salt
