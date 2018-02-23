@@ -21,6 +21,13 @@ function Salt:initialize()
 	self.hoveringObject = false
 
 	self.salt.joint = love.physics.newMouseJoint(self.salt.body, 0, 0)
+
+	self.objects = {
+		self:createObject("graphics/plate.png", lg:getWidth() / 2, lg:getHeight() - 100),
+		self:createObject("graphics/chicken.png", lg:getWidth() / 2, lg:getHeight() - 300),
+		self:createObject("graphics/knife.png", (lg:getWidth() / 2) + 100, lg:getHeight() - 100),
+		self:createObject("graphics/fork.png", (lg:getWidth() / 2) - 100, lg:getHeight() - 100)
+	}
 end
 
 function Salt:draw()
@@ -28,15 +35,26 @@ function Salt:draw()
 
 	lg.polygon("fill", self.ground.body:getWorldPoints(self.ground.shape:getPoints()))
 
+	for _, o in ipairs(self.objects) do
+		local x, y = o.body:getPosition()
+		local w = o.image:getWidth()
+		local h = o.image:getHeight()
+
+		lg.draw(o.image, x, y, o.body:getAngle(), 1, 1, w / 2, h / 2)
+	end
+
 	self:drawSaltAsker()
 	self:drawSalt()
+
 	self:drawBearMouth()
 	self:drawBear()
 	self:drawPaw()
 end
 
 function Salt:update(dt)
-	self.salt.joint:setTarget(self.paw.body:getPosition())
+	if self.salt.joint then
+		self.salt.joint:setTarget(self.paw.body:getPosition())
+	end
 
 	self.physicsWorld:update(dt)
 	self:pawMovement(dt)
@@ -109,7 +127,7 @@ function Salt:createSalt(world)
 	local h = salt.image:getHeight()
 
 	salt.body = love.physics.newBody(world, x, y, "dynamic")
-	salt.body:setAngle(0.4)
+	salt.body:setAngle(0)
 	salt.shape = love.physics.newPolygonShape(-(w/2), -(h/2), -(w/2), h/2, w/2, h/2, w/2, -h/2)
 	salt.fixture = love.physics.newFixture(salt.body, salt.shape)
 
@@ -117,8 +135,8 @@ function Salt:createSalt(world)
 end
 
 function Salt:createPaw(world)
-	local x = lg:getWidth() / 2
-	local y = lg:getHeight() / 2
+	local x = 100
+	local y = 100
 
 	local paw = {}
 	paw.image = lg.newImage("graphics/glass paw.png")
@@ -197,6 +215,20 @@ function Salt:createBear()
 	bear.position.y = lg:getHeight() - bear.face.h / 2 + yOffset
 
 	return bear
+end
+
+function Salt:createObject(image, x, y)
+	local o = {}
+	o.image = lg.newImage(image)
+
+	local w = o.image:getWidth()
+	local h = o.image:getHeight()
+
+	o.body = love.physics.newBody(self.physicsWorld, x, y, "dynamic")
+	o.shape = love.physics.newRectangleShape(0, 0, w, h)
+	o.fixture = love.physics.newFixture(o.body, o.shape)
+
+	return o
 end
 
 return Salt
