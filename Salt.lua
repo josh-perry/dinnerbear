@@ -16,9 +16,11 @@ function Salt:initialize()
 	self.bear = self:createBear()
 	self.paw = self:createPaw(self.physicsWorld)
 
-	self.grabbed = false
+	self.grabbed = true
 
 	self.hoveringObject = false
+
+	self.salt.joint = love.physics.newMouseJoint(self.salt.body, 0, 0)
 end
 
 function Salt:draw()
@@ -34,6 +36,8 @@ function Salt:draw()
 end
 
 function Salt:update(dt)
+	self.salt.joint:setTarget(self.paw.body:getPosition())
+
 	self.physicsWorld:update(dt)
 	self:pawMovement(dt)
 end
@@ -95,8 +99,8 @@ function Salt:drawBear()
 end
 
 function Salt:createSalt(world)
-	local y = lg:getHeight()/2
-	local x = lg:getWidth()/2
+	local y = 0
+	local x = 0
 
 	local salt = {}
 	salt.image = lg.newImage("graphics/salt.png")
@@ -125,9 +129,8 @@ function Salt:createPaw(world)
 	paw.speed = 250
 
 	paw.body = love.physics.newBody(world, x, y)
-	paw.shape = love.physics.newCircleShape(16)
+	paw.shape = love.physics.newCircleShape(0)
 	paw.fixture = love.physics.newFixture(paw.body, paw.shape)
-	paw.joint = nil
 
 	return paw
 end
