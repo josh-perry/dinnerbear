@@ -12,13 +12,15 @@ function Salt:initialize()
 
 	self.salt = self:createSalt(self.physicsWorld)
 	self.ground = self:createGround(self.physicsWorld)
+
+	self.paw = lg.newImage("graphics/glass paw.png")
 end
 
 function Salt:draw()
-	lg.printf("salty boi", 0, lg:getHeight() / 2, lg:getWidth(), "center")
-
 	lg.polygon("fill", self.ground.body:getWorldPoints(self.ground.shape:getPoints()))
-	lg.polygon("fill", self.salt.body:getWorldPoints(self.salt.shape:getPoints()))
+
+	self:drawSalt()
+	self:drawPaw()
 end
 
 function Salt:update(dt)
@@ -28,6 +30,25 @@ end
 function Salt:keypressed(key, scancode, isRepeat)
 end
 
+function Salt:drawSalt()
+	local x, y = self.salt.body:getPosition()
+	local w = self.salt.image:getWidth()
+	local h = self.salt.image:getHeight()
+
+	lg.draw(self.salt.image, x, y, self.salt.body:getAngle(), 1, 1, w / 2, h / 2)
+end
+
+function Salt:drawPaw()
+	local x, y = self.salt.body:getPosition()
+	local w = self.salt.image:getWidth()
+	local h = self.salt.image:getHeight()
+
+	x = x - 80
+	y = y + 40
+
+	lg.draw(self.paw, x, y, self.salt.body:getAngle(), 1, 1, w / 2, h / 2)
+end
+
 function Salt:createSalt(world)
 	local y = lg:getHeight()/2
 	local x = lg:getWidth()/2
@@ -35,11 +56,11 @@ function Salt:createSalt(world)
 	local salt = {}
 	salt.image = lg.newImage("graphics/salt.png")
 
-
 	local w = salt.image:getWidth()
 	local h = salt.image:getHeight()
 
 	salt.body = love.physics.newBody(self.physicsWorld, x, y, "dynamic")
+	salt.body:setAngle(0)
 	salt.shape = love.physics.newPolygonShape(-(w/2), -(h/2), -(w/2), h/2, w/2, h/2, w/2, -h/2)
 	salt.fixture = love.physics.newFixture(salt.body, salt.shape)
 
