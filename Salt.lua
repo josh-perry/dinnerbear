@@ -1,5 +1,7 @@
 -- Libraries
 local class = require("libs/middleclass/middleclass")
+local lume = require("libs/lume/lume")
+local cron = require("libs/cron/cron")
 
 -- Shorthand
 local lg = love.graphics
@@ -10,7 +12,6 @@ local Salt = Game:addState("Salt")
 function Salt:initialize()
 	self.physicsWorld = love.physics.newWorld(0, 9.81*32, true)
 
-	-- self.salt = self:createSalt(self.physicsWorld)
 	self.ground = self:createGround(self.physicsWorld)
 	self.saltAsker = self:createSaltAsker(self.physicsWorld)
 	self.bear = self:createBear()
@@ -18,15 +19,26 @@ function Salt:initialize()
 
 	self.grabbed = true
 
-	self.hoveringObject = false
-
 	self.objects = {
 		self:createObject("graphics/plate.png", lg:getWidth() / 2, lg:getHeight() - 100),
 		self:createObject("graphics/chicken.png", lg:getWidth() / 2, lg:getHeight() - 200),
 		self:createObject("graphics/knife.png", (lg:getWidth() / 2) + 100, lg:getHeight() - 100),
 		self:createObject("graphics/fork.png", (lg:getWidth() / 2) - 100, lg:getHeight() - 100),
-		self:createObject("graphics/salt.png", 50, 50)
+		self:createObject("graphics/salt.png", 100, 50)
 	}
+
+	self:initRandomMovementTimer()
+
+	self.randomMoveDirection = nil
+end
+
+function Salt:initRandomMovementTimer()
+	self.randomMoveTimer = cron.after(math.random(0.1, 0.3),
+		function()
+			self.randomMoveDirection = lume.randomchoice({"up", "down", "left", "right"})
+
+			self:initRandomMovementTimer()
+		end)
 end
 
 function Salt:draw()
@@ -53,8 +65,34 @@ function Salt:update(dt)
 		self.grabbing.joint:setTarget(self.paw.body:getPosition())
 	end
 
+	self.randomMoveTimer:update(dt)
+
+	if self.randomMoveDirection then
+		self:movePawDirection(self.randomMoveDirection, dt)
+	end
+
 	self.physicsWorld:update(dt)
 	self:pawMovement(dt)
+end
+
+function Salt:movePawDirection(direction, dt)
+	local speed = love.math.random(130, 170)
+
+	if direction == "up" then
+		self.paw.position.y = self.paw.position.y - (speed * dt)
+	end
+
+	if direction == "down" then
+		self.paw.position.y = self.paw.position.y + (speed * dt)
+	end
+
+	if direction == "left" then
+		self.paw.position.x = self.paw.position.x - (speed * dt)
+	end
+
+	if direction == "right" then
+		self.paw.position.x = self.paw.position.x + (speed * dt)
+	end
 end
 
 function Salt:keypressed(key, scancode, isRepeat)
