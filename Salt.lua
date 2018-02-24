@@ -24,7 +24,7 @@ function Salt:initialize()
 
 	self.objects = {
 		self:createObject("graphics/plate.png", lg:getWidth() / 2, lg:getHeight() - 100),
-		self:createObject("graphics/chicken.png", lg:getWidth() / 2, lg:getHeight() - 300),
+		self:createObject("graphics/chicken.png", lg:getWidth() / 2, lg:getHeight() - 200),
 		self:createObject("graphics/knife.png", (lg:getWidth() / 2) + 100, lg:getHeight() - 100),
 		self:createObject("graphics/fork.png", (lg:getWidth() / 2) - 100, lg:getHeight() - 100)
 	}
@@ -176,7 +176,7 @@ function Salt:createSaltAsker(world)
 		y = lg:getHeight() - saltAsker.image:getHeight()
 	}
 
-	saltAsker.body = love.physics.newBody(world, saltAsker.position.x + 65 + (w/2), saltAsker.position.y + 126 + (h/2))
+	saltAsker.body = love.physics.newBody(world, saltAsker.position.x + 65 + (w/2), saltAsker.position.y + 140 + (h/2))
 	saltAsker.shape = love.physics.newRectangleShape(w, h)
 	saltAsker.fixture = love.physics.newFixture(saltAsker.body, saltAsker.shape)
 
