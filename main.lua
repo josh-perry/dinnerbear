@@ -4,6 +4,7 @@ local Game = require("Game")
 require("MainMenu")
 require("Drinks")
 require("Salt")
+require("SmallTalk")
 require("GameOver")
 
 local function initDebug()
