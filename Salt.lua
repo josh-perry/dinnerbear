@@ -10,7 +10,7 @@ local Salt = Game:addState("Salt")
 function Salt:initialize()
 	self.physicsWorld = love.physics.newWorld(0, 9.81*32, true)
 
-	self.salt = self:createSalt(self.physicsWorld)
+	-- self.salt = self:createSalt(self.physicsWorld)
 	self.ground = self:createGround(self.physicsWorld)
 	self.saltAsker = self:createSaltAsker(self.physicsWorld)
 	self.bear = self:createBear()
@@ -24,7 +24,8 @@ function Salt:initialize()
 		self:createObject("graphics/plate.png", lg:getWidth() / 2, lg:getHeight() - 100),
 		self:createObject("graphics/chicken.png", lg:getWidth() / 2, lg:getHeight() - 200),
 		self:createObject("graphics/knife.png", (lg:getWidth() / 2) + 100, lg:getHeight() - 100),
-		self:createObject("graphics/fork.png", (lg:getWidth() / 2) - 100, lg:getHeight() - 100)
+		self:createObject("graphics/fork.png", (lg:getWidth() / 2) - 100, lg:getHeight() - 100),
+		self:createObject("graphics/salt.png", 50, 50)
 	}
 end
 
@@ -42,8 +43,6 @@ function Salt:draw()
 	end
 
 	self:drawSaltAsker()
-	self:drawSalt()
-
 	self:drawBearMouth()
 	self:drawBear()
 	self:drawPaw()
@@ -61,8 +60,18 @@ end
 function Salt:keypressed(key, scancode, isRepeat)
 	if key == "space" then
 		if not self.grabbing then
-			self.grabbing = self.salt
-			self.grabbing.joint = love.physics.newMouseJoint(self.grabbing.body, self.paw.body:getPosition())
+			-- self.grabbing = self.salt
+			for _, o in ipairs(self.objects) do
+				local oX, oY = o.body:getPosition()
+
+				local distance = math.sqrt((oX - self.paw.body:getX()) ^ 2 + (oY - self.paw.body:getY()) ^ 2)
+
+				if distance < 64 then
+					self.grabbing = o
+					self.grabbing.joint = love.physics.newMouseJoint(self.grabbing.body, self.paw.body:getPosition())
+					return
+				end
+			end
 		else
 			self.grabbing.joint:destroy()
 			self.grabbing = nil
@@ -89,14 +98,6 @@ function Salt:pawMovement(dt)
 
 	self.paw.body:setX(self.paw.position.x + 100)
 	self.paw.body:setY(self.paw.position.y + 25)
-end
-
-function Salt:drawSalt()
-	local x, y = self.salt.body:getPosition()
-	local w = self.salt.image:getWidth()
-	local h = self.salt.image:getHeight()
-
-	lg.draw(self.salt.image, x, y, self.salt.body:getAngle(), 1, 1, w / 2, h / 2)
 end
 
 function Salt:drawSaltAsker()
