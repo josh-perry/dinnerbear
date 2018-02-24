@@ -12,6 +12,11 @@ function Game:initialize()
 	self.suspicion = 0
 
 	lg.setBackgroundColor(80, 110, 200)
+
+	self.uiFont = love.graphics.newFont("fonts/Architex.ttf", 36)
+	self.bigUiFont = love.graphics.newFont("fonts/Architex.ttf", 72)
+
+	self.suspicionText = love.graphics.newText(self.uiFont, "Suspicion ")
 end
 
 function Game:draw()
@@ -31,7 +36,11 @@ function Game:changeState(state)
 end
 
 function Game:drawUi()
-	lg.print("Suspicion: "..self.suspicion.."%", 10, 10)
+	lg.setFont(self.uiFont)
+	lg.draw(self.suspicionText, 10, 10)
+
+	lg.setFont(self.bigUiFont)
+	lg.print(self.suspicion.."%", 20 + self.suspicionText:getWidth(), 0)
 end
 
 return Game
