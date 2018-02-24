@@ -32,6 +32,8 @@ function Salt:initialize()
 	self.randomMoveDirection = nil
 
 	self.saltTimer = nil
+
+	self.speech = self:createSpeechBubble()
 end
 
 function Salt:initRandomMovementTimer()
@@ -60,6 +62,17 @@ function Salt:draw()
 	self:drawSaltAsker()
 	self:drawBearMouth()
 	self:drawBear()
+	self:drawSpeechBubble()
+end
+
+function Salt:drawSpeechBubble()
+	lg.setColor(255, 255, 255)
+
+	local x, y = self.speech.position.x, self.speech.position.y
+	local subX, subY = self.speech.image:getWidth()/2, self.speech.image:getHeight()/2
+
+	lg.draw(self.speech.image, x, y)
+	lg.draw(self.speech.subImage, x + subX, y + subY, 0, 1, 1, self.speech.subImage:getWidth() / 2, self.speech.subImage:getHeight() / 2)
 end
 
 function Salt:update(dt)
@@ -334,6 +347,18 @@ function Salt:resetObject(o)
 	o.body:setLinearVelocity(0, 0)
 
 	self.suspicion = self.suspicion + math.ceil(o.image:getWidth() / 5)
+end
+
+function Salt:createSpeechBubble()
+	local speech = {}
+	speech.image = lg.newImage("graphics/speech.png")
+	speech.subImage = lg.newImage("graphics/salt.png")
+
+	speech.position = {}
+	speech.position.x = lg:getWidth() - speech.image:getWidth()
+	speech.position.y = 0
+
+	return speech
 end
 
 return Salt
