@@ -120,7 +120,7 @@ function Salt:update(dt)
 	self:pawMovement(dt)
 
 	if self.win then
-		self:changeState("MainMenu")
+		self:changeState("SmallTalk")
 		self.win = false
 		return
 	elseif self.suspicion >= 100 then
