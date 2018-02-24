@@ -37,9 +37,9 @@ function Salt:initialize()
 end
 
 function Salt:initRandomMovementTimer()
-	self.randomMoveTimer = cron.after(math.random(0.1, 0.3),
+	self.randomMoveTimer = cron.after(math.random(0.2, 0.3),
 		function()
-			self.randomMoveDirection = lume.randomchoice({"up", "down", "left", "right"})
+			self.randomMoveDirection = lume.randomchoice({"up", "down", "left", "right", "upleft", "upright", "downleft", "downright"})
 
 			self:initRandomMovementTimer()
 		end)
@@ -147,6 +147,26 @@ function Salt:movePawDirection(direction, dt)
 	if direction == "right" then
 		self.paw.position.x = self.paw.position.x + (speed * dt)
 	end
+
+	if direction == "upleft" then
+		self.paw.position.x = self.paw.position.x - (speed * dt)
+		self.paw.position.y = self.paw.position.y - (speed * dt)
+	end
+
+	if direction == "upright" then
+		self.paw.position.x = self.paw.position.x + (speed * dt)
+		self.paw.position.y = self.paw.position.y + (speed * dt)
+	end
+
+	if direction == "downleft" then
+		self.paw.position.x = self.paw.position.x - (speed * dt)
+		self.paw.position.y = self.paw.position.y + (speed * dt)
+	end
+
+	if direction == "downright" then
+		self.paw.position.x = self.paw.position.x + (speed * dt)
+		self.paw.position.y = self.paw.position.y + (speed * dt)
+	end
 end
 
 function Salt:keypressed(key, scancode, isRepeat)
@@ -249,7 +269,7 @@ function Salt:createPaw(world)
 		x = x,
 		y = y
 	}
-	paw.speed = 500
+	paw.speed = 200
 
 	paw.body = love.physics.newBody(world, x, y)
 	paw.shape = love.physics.newCircleShape(0)
