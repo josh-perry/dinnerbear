@@ -8,6 +8,7 @@ local Game = require("Game")
 local GameOver = Game:addState("GameOver")
 
 function GameOver:initialize()
+	self.music:stop()
 end
 
 function GameOver:drawBear(x, y)

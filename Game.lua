@@ -17,6 +17,9 @@ function Game:initialize()
 	self.bigUiFont = love.graphics.newFont("fonts/Architex.ttf", 72)
 
 	self.suspicionText = love.graphics.newText(self.uiFont, "Suspicion ")
+
+	self.music = love.audio.newSource("music/Hall of the Mountain King.mp3")
+	self.music:setLooping(true)
 end
 
 function Game:draw()
