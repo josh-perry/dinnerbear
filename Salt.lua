@@ -103,14 +103,17 @@ function Salt:update(dt)
 		end
 	end
 
+	self.physicsWorld:update(dt)
+	self:pawMovement(dt)
+
 	if self.win then
 		self:changeState("MainMenu")
 		self.win = false
 		return
+	elseif self.suspicion >= 100 then
+		self:changeState("GameOver")
+		return
 	end
-
-	self.physicsWorld:update(dt)
-	self:pawMovement(dt)
 end
 
 function Salt:movePawDirection(direction, dt)
@@ -329,6 +332,8 @@ function Salt:resetObject(o)
 	o.body:setX(o.originalPosition.x)
 	o.body:setY(o.originalPosition.y)
 	o.body:setLinearVelocity(0, 0)
+
+	self.suspicion = self.suspicion + math.ceil(o.image:getWidth() / 5)
 end
 
 return Salt
