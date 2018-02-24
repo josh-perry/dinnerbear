@@ -24,12 +24,14 @@ function Salt:initialize()
 		self:createObject("graphics/chicken.png", lg:getWidth() / 2, lg:getHeight() - 200),
 		self:createObject("graphics/knife.png", (lg:getWidth() / 2) + 100, lg:getHeight() - 100),
 		self:createObject("graphics/fork.png", (lg:getWidth() / 2) - 100, lg:getHeight() - 100),
-		self:createObject("graphics/salt.png", 100, 50)
+		self:createObject("graphics/salt.png", 100, 50, true, "salt")
 	}
 
 	self:initRandomMovementTimer()
 
 	self.randomMoveDirection = nil
+
+	self.saltTimer = nil
 end
 
 function Salt:initRandomMovementTimer()
@@ -54,10 +56,10 @@ function Salt:draw()
 		lg.draw(o.image, x, y, o.body:getAngle(), 1, 1, w / 2, h / 2)
 	end
 
+	self:drawPaw()
 	self:drawSaltAsker()
 	self:drawBearMouth()
 	self:drawBear()
-	self:drawPaw()
 end
 
 function Salt:update(dt)
@@ -65,10 +67,46 @@ function Salt:update(dt)
 		self.grabbing.joint:setTarget(self.paw.body:getPosition())
 	end
 
+	if self.saltTimer then
+		self.saltTimer:update(dt)
+	end
+
 	self.randomMoveTimer:update(dt)
 
 	if self.randomMoveDirection then
 		self:movePawDirection(self.randomMoveDirection, dt)
+	end
+
+	for _, o in ipairs(self.objects) do
+		local oX, oY = o.body:getPosition()
+
+		if oY > lg:getHeight() then
+			self:resetObject(o)
+		end
+
+		if o.important then
+			if oY > lg:getHeight() / 2 and oX > (lg:getWidth() / 2) + 200 then
+				self:resetObject(o)
+			end
+		end
+
+		if not self.grabbing then
+			if o.name == "salt" then
+				if oY < lg:getHeight() / 2 and oX > lg:getWidth() / 2 then
+					if not self.saltTimer then
+						self.saltTimer = cron.after(5, function() self.win = true end)
+					end
+				else
+					self.saltTimer = nil
+				end
+			end
+		end
+	end
+
+	if self.win then
+		self:changeState("MainMenu")
+		self.win = false
+		return
 	end
 
 	self.physicsWorld:update(dt)
@@ -132,6 +170,11 @@ function Salt:pawMovement(dt)
 
 	if love.keyboard.isDown("d") then
 		self.paw.position.x = self.paw.position.x + (self.paw.speed * dt)
+
+		local xLimit = (lg:getWidth() / 2) + (lg:getWidth() / 4) - self.paw.image:getWidth()
+		if self.paw.position.x > xLimit  then
+			self.paw.position.x = xLimit
+		end
 	end
 
 	self.paw.body:setX(self.paw.position.x + 100)
@@ -153,10 +196,12 @@ function Salt:drawPaw()
 end
 
 function Salt:drawBearMouth()
+	lg.setColor(255, 255, 255, 100)
 	lg.draw(self.bear.image, self.bear.quads.mouth, self.bear.position.x, self.bear.position.y, self.bear.rotation, -1, 1, self.bear.face.w/2, self.bear.face.h/2)
 end
 
 function Salt:drawBear()
+	lg.setColor(255, 255, 255, 100)
 	lg.draw(self.bear.image, self.bear.quads.face, self.bear.position.x, self.bear.position.y, self.bear.rotation, -1, 1, self.bear.face.w/2, self.bear.face.h/2)
 end
 
@@ -188,7 +233,7 @@ function Salt:createPaw(world)
 		x = x,
 		y = y
 	}
-	paw.speed = 250
+	paw.speed = 500
 
 	paw.body = love.physics.newBody(world, x, y)
 	paw.shape = love.physics.newCircleShape(0)
@@ -261,8 +306,9 @@ function Salt:createBear()
 	return bear
 end
 
-function Salt:createObject(image, x, y)
+function Salt:createObject(image, x, y, important, name)
 	local o = {}
+	o.originalPosition = {x = x, y = y}
 	o.image = lg.newImage(image)
 
 	local w = o.image:getWidth()
@@ -272,7 +318,17 @@ function Salt:createObject(image, x, y)
 	o.shape = love.physics.newRectangleShape(0, 0, w, h)
 	o.fixture = love.physics.newFixture(o.body, o.shape)
 
+	-- Should respawn?
+	o.important = important or false
+	o.name = name or nil
+
 	return o
+end
+
+function Salt:resetObject(o)
+	o.body:setX(o.originalPosition.x)
+	o.body:setY(o.originalPosition.y)
+	o.body:setLinearVelocity(0, 0)
 end
 
 return Salt
