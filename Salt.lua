@@ -20,8 +20,6 @@ function Salt:initialize()
 
 	self.hoveringObject = false
 
-	self.salt.joint = love.physics.newMouseJoint(self.salt.body, 0, 0)
-
 	self.objects = {
 		self:createObject("graphics/plate.png", lg:getWidth() / 2, lg:getHeight() - 100),
 		self:createObject("graphics/chicken.png", lg:getWidth() / 2, lg:getHeight() - 200),
@@ -52,8 +50,8 @@ function Salt:draw()
 end
 
 function Salt:update(dt)
-	if self.salt.joint then
-		self.salt.joint:setTarget(self.paw.body:getPosition())
+	if self.grabbing then
+		self.grabbing.joint:setTarget(self.paw.body:getPosition())
 	end
 
 	self.physicsWorld:update(dt)
@@ -62,6 +60,13 @@ end
 
 function Salt:keypressed(key, scancode, isRepeat)
 	if key == "space" then
+		if not self.grabbing then
+			self.grabbing = self.salt
+			self.grabbing.joint = love.physics.newMouseJoint(self.grabbing.body, self.paw.body:getPosition())
+		else
+			self.grabbing.joint:destroy()
+			self.grabbing = nil
+		end
 	end
 end
 
