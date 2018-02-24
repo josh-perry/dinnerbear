@@ -41,7 +41,7 @@ end
 function MainMenu:keypressed(key, scancode, isRepeat)
 	if key == "space" then
 		self.music:play()
-		self:changeState("Drinks")
+		self:changeState("SmallTalk")
 	end
 end
 

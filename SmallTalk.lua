@@ -1,5 +1,6 @@
 -- Libraries
 local class = require("libs/middleclass/middleclass")
+local cron = require("libs/cron/cron")
 
 -- Shorthand
 local lg = love.graphics
@@ -7,12 +8,32 @@ local lg = love.graphics
 local Game = require("Game")
 local SmallTalk = Game:addState("SmallTalk")
 
+local Talker = require("Talker")
+
 function SmallTalk:initialize()
 	self.bear = self:createBear()
+
+	self.talkers = {}
+
+	self:initializeTalkerTimer()
+
+end
+
+function SmallTalk:initializeTalkerTimer()
+	self.newTalkerTimer = cron.after(love.math.random(2, 5),
+		function()
+			print("ok")
+			table.insert(self.talkers, Talker:new())
+			self:initializeTalkerTimer()
+		end)
 end
 
 function SmallTalk:draw()
 	self:drawBear()
+
+	for _, talker in ipairs(self.talkers) do
+		talker:draw()
+	end
 end
 
 function SmallTalk:drawBear()
@@ -22,6 +43,11 @@ function SmallTalk:drawBear()
 end
 
 function SmallTalk:update(dt)
+	for _, talker in ipairs(self.talkers) do
+		talker:update(dt)
+	end
+
+	self.newTalkerTimer:update(dt)
 end
 
 function SmallTalk:keypressed(key, scancode, isRepeat)
