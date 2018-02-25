@@ -18,6 +18,7 @@ local function initDebug()
 end
 
 function love.load()
+	math.randomseed(os.time())
 	initDebug()
 
 	Game = Game:new()

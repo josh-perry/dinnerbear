@@ -1,6 +1,7 @@
 -- Libraries
 local class = require("libs/middleclass/middleclass")
 local cron = require("libs/cron/cron")
+local lume = require("libs/lume/lume")
 
 local CheckCollision = require("CheckCollision")
 
@@ -11,7 +12,7 @@ local Game = require("Game")
 local SmallTalk = Game:addState("SmallTalk")
 
 local Talker = require("Talker")
-local BearSpeech = require("BearSpeech")
+-- local BearSpeech = require("BearSpeech")
 
 function SmallTalk:initialize()
 	self.bear = self:createBear()
@@ -21,14 +22,21 @@ function SmallTalk:initialize()
 
 	self:initializeTalkerTimer()
 
-	self.bearSpeech = BearSpeech:new()
+	self.words = {}
+
+	for s in string.gmatch(love.filesystem.read("1-1000.txt"), "[^\r\n]+") do
+		table.insert(self.words, s)
+	end
+
+	self.totalTalkers = self.totalTalkers + 1
+	table.insert(self.talkers, Talker:new(lume.randomchoice(self.words)))
 end
 
 function SmallTalk:initializeTalkerTimer()
-	self.newTalkerTimer = cron.after(love.math.random(2, 5),
+	self.newTalkerTimer = cron.after(love.math.random(0.2, 2),
 		function()
 			self.totalTalkers = self.totalTalkers + 1
-			table.insert(self.talkers, Talker:new())
+			table.insert(self.talkers, Talker:new(lume.randomchoice(self.words)))
 
 			if self.totalTalkers < 10 then
 				self:initializeTalkerTimer()
@@ -43,7 +51,7 @@ function SmallTalk:draw()
 		talker:draw()
 	end
 
-	self.bearSpeech:draw()
+	-- self.bearSpeech:draw()
 
 	self:drawUi()
 end
@@ -61,7 +69,7 @@ function SmallTalk:update(dt)
 	end
 
 	self.newTalkerTimer:update(dt)
-	self.bearSpeech:update(dt)
+	-- self.bearSpeech:update(dt)
 
 	for i, talker in ipairs(self.talkers) do
 		talker:update(dt)
@@ -82,26 +90,23 @@ function SmallTalk:update(dt)
 end
 
 function SmallTalk:keypressed(key, scancode, isRepeat)
-	if key == "space" then
-		local safe = false
-
+	if self.currentTalker == nil then
 		for _, talker in ipairs(self.talkers) do
-			local x1, y1 = self.bearSpeech.position.x, self.bearSpeech.position.y
-			local w1, h1 = self.bearSpeech.image:getWidth(), self.bearSpeech.image:getHeight()
-
-			local x2, y2 = talker.position.x, talker.position.y
-			local w2, h2 = talker.image:getWidth(), talker.image:getHeight()
-
-			if CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2) then
-				if talker.done then
-					safe = true
-					table.remove(self.talkers, _)
-				end
+			if string.sub(talker.word, 1, 1) == key then
+				talker.typedCharacters = 1
+				self.currentTalker = talker
 			end
 		end
 
-		if not safe then
-			self.suspicion = self.suspicion + 10
+		return
+	end
+
+	if string.sub(self.currentTalker.word, self.currentTalker.typedCharacters + 1, self.currentTalker.typedCharacters + 1) == key then
+		self.currentTalker.typedCharacters = self.currentTalker.typedCharacters + 1
+
+		if self.currentTalker.typedCharacters == string.len(self.currentTalker.word) then
+			self.currentTalker.destroyed = true
+			self.currentTalker = nil
 		end
 	end
 end
