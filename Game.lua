@@ -15,6 +15,10 @@ function Game:initialize()
 
 	self.uiFont = love.graphics.newFont("fonts/Architex.ttf", 36)
 	self.bigUiFont = love.graphics.newFont("fonts/Architex.ttf", 72)
+	self.typingFont = love.graphics.newImageFont("fonts/imagefont.png",
+												 " abcdefghijklmnopqrstuvwxyz" ..
+												 "ABCDEFGHIJKLMNOPQRSTUVWXYZ0" ..
+												 "123456789.,!?-+/():;%&`'*#=[]\"")
 
 	self.suspicionText = love.graphics.newText(self.uiFont, "Suspicion ")
 

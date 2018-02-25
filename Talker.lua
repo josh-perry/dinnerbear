@@ -14,13 +14,7 @@ function Talker:initialize(word)
 	self.doneImage = lg.newImage("graphics/done.png")
 	self.suspiciousImage = lg.newImage("graphics/suspicious.png")
 
-	if love.math.random(0, 1) == 1 then
-		-- Left side
-		self.position = {x = 0, y = love.math.random(0, lg:getHeight() - self.image:getHeight())}
-	else
-		-- Right side
-		self.position = {x = lg:getWidth() - self.image:getWidth(), y = love.math.random(0, lg:getHeight() - self.image:getHeight())}
-	end
+	self.position = {x = love.math.random(0, lg:getWidth() - self.image:getHeight()), y = love.math.random(0, lg:getHeight() - self.image:getHeight())}
 
 	self.done = false
 	self.doneTimer = cron.after(love.math.random(2, 8),
@@ -32,7 +26,7 @@ function Talker:initialize(word)
 
 					self.suspiciousTimer = cron.after(1,
 						function()
-							self.destroyed = true
+							self.destroyed = true 
 						end)
 				end)
 		end)
@@ -56,14 +50,15 @@ function Talker:draw()
 		lg.draw(self.doneImage, self.position.x, self.position.y)
 	end
 
-	local wordX, wordY = self.position.x, self.position.y - 10
+	local wordX, wordY = self.position.x, self.position.y + self.image:getHeight() / 2
 
 	lg.setColor(255, 255, 255)
+	lg.setFont(self.typingFont)
 	lg.print(self.word, wordX, wordY)
 
 	if self.typedCharacters then
 		local typedWord = string.sub(self.word, 1, self.typedCharacters)
-		lg.setColor(255, 255, 0)
+		lg.setColor(100, 100, 0)
 		lg.print(typedWord, wordX, wordY)
 		lg.setColor(255, 255, 255)
 	end

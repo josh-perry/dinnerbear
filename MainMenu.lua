@@ -11,6 +11,8 @@ function MainMenu:initialize()
 	local image = lg.newImage("graphics/menu_bear.png")
 	local w, h = image:getWidth(), image:getHeight()
 
+	self.background = lg.newImage("graphics/menu.png")
+
 	self.suspicion = 0
 
 	self.bear = {}
@@ -31,6 +33,8 @@ function MainMenu:drawBear(x, y)
 end
 
 function MainMenu:draw()
+	lg.draw(self.background, 0, 0)
+
 	self:drawBear(lg:getWidth() - 300, lg:getHeight() - 480 - 50)
 	lg.printf("DINNERBEAR", 0, lg:getHeight() / 2, lg:getWidth(), "center")
 end
@@ -41,7 +45,7 @@ end
 function MainMenu:keypressed(key, scancode, isRepeat)
 	if key == "space" then
 		self.music:play()
-		self:changeState("SmallTalk")
+		self:changeState("Drinks")
 	end
 end
 

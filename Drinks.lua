@@ -53,6 +53,10 @@ function Drinks:draw()
 	self:drawGlass()
 	self:drawBear()
 	self:drawPaw()
+
+	lg.setColor(255, 255, 255)
+	lg.setFont(self.uiFont)
+	lg.printf("Drink the water! Press Q & E to rotate!", 0, lg:getHeight() - 40, lg:getWidth(), "center")
 end
 
 function Drinks:update(dt)

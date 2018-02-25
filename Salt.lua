@@ -63,6 +63,10 @@ function Salt:draw()
 	self:drawBearMouth()
 	self:drawBear()
 	self:drawSpeechBubble()
+
+	lg.setColor(255, 255, 255)
+	lg.setFont(self.uiFont)
+	lg.printf("Pass the salt! Press WASD to move and space to grab/drop!", 0, lg:getHeight() - 40, lg:getWidth(), "center")
 end
 
 function Salt:drawSpeechBubble()

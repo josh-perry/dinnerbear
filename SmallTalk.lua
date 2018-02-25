@@ -29,14 +29,18 @@ function SmallTalk:initialize()
 	end
 
 	self.totalTalkers = self.totalTalkers + 1
-	table.insert(self.talkers, Talker:new(lume.randomchoice(self.words)))
+	local t = Talker:new(lume.randomchoice(self.words))
+	t.typingFont = self.typingFont
+	table.insert(self.talkers, t)
 end
 
 function SmallTalk:initializeTalkerTimer()
 	self.newTalkerTimer = cron.after(love.math.random(0.2, 2),
 		function()
 			self.totalTalkers = self.totalTalkers + 1
-			table.insert(self.talkers, Talker:new(lume.randomchoice(self.words)))
+			local t = Talker:new(lume.randomchoice(self.words))
+			t.typingFont = self.typingFont
+			table.insert(self.talkers, t)
 
 			if self.totalTalkers < 10 then
 				self:initializeTalkerTimer()
@@ -54,6 +58,10 @@ function SmallTalk:draw()
 	-- self.bearSpeech:draw()
 
 	self:drawUi()
+
+	lg.setColor(255, 255, 255)
+	lg.setFont(self.uiFont)
+	lg.printf("Make smalltalk! Type the words!", 0, lg:getHeight() - 40, lg:getWidth(), "center")
 end
 
 function SmallTalk:drawBear()
@@ -79,6 +87,10 @@ function SmallTalk:update(dt)
 				self.suspicion = self.suspicion + 5
 			end
 
+			if talker.typedCharacters then
+				self.currentTalker = nil
+			end
+
 			table.remove(self.talkers, i)
 		end
 	end
@@ -95,6 +107,7 @@ function SmallTalk:keypressed(key, scancode, isRepeat)
 			if string.sub(talker.word, 1, 1) == key then
 				talker.typedCharacters = 1
 				self.currentTalker = talker
+				return
 			end
 		end
 
