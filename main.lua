@@ -6,6 +6,7 @@ require("Drinks")
 require("Salt")
 require("SmallTalk")
 require("GameOver")
+require("Win")
 
 local function initDebug()
 	-- ST3 output

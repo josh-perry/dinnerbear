@@ -72,8 +72,7 @@ end
 
 function SmallTalk:update(dt)
 	if self.totalTalkers == 10 and table.getn(self.talkers) == 0 then
-		print("YOU DID IT")
-		self:changeState("MainMenu")
+		self:changeState("Win")
 	end
 
 	self.newTalkerTimer:update(dt)

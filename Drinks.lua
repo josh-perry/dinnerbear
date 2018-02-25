@@ -122,6 +122,31 @@ function Drinks:moveGlass(dt)
 		shakyness = shakyness * 12
 	end
 
+	local speed = 100
+	if love.keyboard.isDown("a") then
+		left.body:setX(left.body:getX() - (speed * dt))
+		right.body:setX(right.body:getX() - (speed * dt))
+		bottom.body:setX(bottom.body:getX() - (speed * dt))
+	end
+
+	if love.keyboard.isDown("d") then
+		left.body:setX(left.body:getX() + (speed * dt))
+		right.body:setX(right.body:getX() + (speed * dt))
+		bottom.body:setX(bottom.body:getX() + (speed * dt))
+	end
+
+	if love.keyboard.isDown("w") then
+		left.body:setY(left.body:getY() - (speed * dt))
+		right.body:setY(right.body:getY() - (speed * dt))
+		bottom.body:setY(bottom.body:getY() - (speed * dt))
+	end
+
+	if love.keyboard.isDown("s") then
+		left.body:setY(left.body:getY() + (speed * dt))
+		right.body:setY(right.body:getY() + (speed * dt))
+		bottom.body:setY(bottom.body:getY() + (speed * dt))
+	end
+
 	-- Random shakes
 	local shake = love.math.random(-shakyness, shakyness)
 	left.body:setAngle(left.body:getAngle() + shake * dt)
